@@ -3,8 +3,8 @@
 ## Content:
 
 * [For what?](#for-what)
-* [filter_fastq](#filter-fastq)
-* [run_dna_rna_tools](#run-dna-rna-tools)
+* [filter_fastq](#filter_fastq)
+* [run_dna_rna_tools](#run_dna_rna_tools)
 * [List of procedures:](#list-of-procedures)
 * [Developers](#developers)
 
