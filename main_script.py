@@ -1,5 +1,5 @@
 from typing import Union
-import bioinf_funcs
+from additional_modules import bioinf_funcs
 
 
 def filter_fastq(
@@ -17,16 +17,17 @@ def filter_fastq(
         for char in quality:
             quality_summ.append(ord(char) - 33)
 
-        CG_content = (sequence.count("C") + sequence.count("G")) * 100 / len(sequence)
+        cg_content = (sequence.count("C") + sequence.count("G")) * 100 / len(sequence)
 
         if (
             (length_bounds[0] <= len(sequence) <= length_bounds[1])
-            and (gc_bounds[0] <= CG_content <= gc_bounds[1])
+            and (gc_bounds[0] <= cg_content <= gc_bounds[1])
             and ((sum(quality_summ)) / len(quality_summ)) >= quality_threshold
         ):
             final_dict[name] = (sequence, quality)
 
     return final_dict
+
 
 def run_dna_rna_tools(*args: Union[str, list[str]]) -> Union[str, list[str]]:
 
@@ -45,11 +46,15 @@ def run_dna_rna_tools(*args: Union[str, list[str]]) -> Union[str, list[str]]:
             result = bioinf_funcs.transcribe(seq_final)
         elif option == "complement":
             result = bioinf_funcs.complement(seq_final)
-        else: return "not an option"
-    
-    else: return "not dna or rna"
+        else:
+            return "not an option"
+
+    else:
+        return "not dna or rna"
 
     if len(result) == 1:
         return result[0]
     return result
-    
+
+
+(run_dna_rna_tools("aaaUUUUuuuGGGCCC", "complement"))
