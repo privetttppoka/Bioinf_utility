@@ -1,4 +1,4 @@
-list_DNA_RNA = "ATCGU"
+list_dna_rna = "ATCGU"
 
 dict_comp_dna = {
     "A": "T",
@@ -28,7 +28,7 @@ def check(seqs):
 
     for seq in seqs:
         sequ = seq.upper()
-        if set(sequ) <= set(list_DNA_RNA) and not ("U" in sequ and "T" in sequ):
+        if set(sequ) <= set(list_dna_rna) and not ("U" in sequ and "T" in sequ):
             list_check.append(seq)
 
         else:
@@ -54,18 +54,16 @@ def reverse(seqs):
 
 def complement(seqs):
 
+    list_comp = []
 
-        list_comp = []
-    
     for seq in seqs:
-        
+
         seq_new = ""
-        
+
         dict_comp = dict_comp_rna if "U" in seq.upper() else dict_comp_dna
         seq_new = "".join([dict_comp[letter] for letter in seq])
         list_comp.append(seq_new)
 
-  
     return list_comp
 
 
