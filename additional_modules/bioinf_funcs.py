@@ -24,24 +24,21 @@ dict_comp_rna = {
 
 def check(seqs):
 
-      
-
     list_check = []
 
     for seq in seqs:
         sequ = seq.upper()
-        if set(sequ) <= set(list_DNA_RNA) and not("U" in sequ and "T" in sequ):
+        if set(sequ) <= set(list_DNA_RNA) and not ("U" in sequ and "T" in sequ):
             list_check.append(seq)
-        
-        else pass
+
+        else:
+            pass
 
     return list_check
 
 
-
-
 def transcribe(seqs):
-    
+
     return [seq.replace("T", "U").replace("t", "u") for seq in seqs]
 
 
@@ -57,16 +54,18 @@ def reverse(seqs):
 
 def complement(seqs):
 
-    list_comp = []
+
+        list_comp = []
+    
     for seq in seqs:
+        
         seq_new = ""
-        if (seq.find("u") == -1) and (seq.find("U") == -1):
-            for letter in seq:
-                seq_new = "".join([dict_comp_dna[letter] for letter in seq])
-        else:
-            for letter in seq:
-                seq_new = "".join([dict_comp_rna[letter] for letter in seq])
+        
+        dict_comp = dict_comp_rna if "U" in seq.upper() else dict_comp_dna
+        seq_new = "".join([dict_comp[letter] for letter in seq])
         list_comp.append(seq_new)
+
+  
     return list_comp
 
 
@@ -75,6 +74,3 @@ def reverse_complement(seqs):
     seqs = complement(seqs)
     list_revcom = reverse(seqs)
     return list_revcom
-
-
-
