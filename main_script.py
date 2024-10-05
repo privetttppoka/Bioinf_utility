@@ -30,8 +30,8 @@ def filter_fastq(
         cg_content = (sequence.count("C") + sequence.count("G")) * 100 / len(sequence)
 
         if (
-            (length_bounds[0] < len(sequence) <= length_bounds[1])
-            and (gc_bounds[0] < cg_content <= gc_bounds[1])
+            (length_bounds[0] <= len(sequence) <= length_bounds[1])
+            and (gc_bounds[0] <= cg_content <= gc_bounds[1])
             and ((sum(quality_summ)) / len(quality_summ)) >= quality_threshold
         ):
             final_dict[name] = (sequence, quality)
