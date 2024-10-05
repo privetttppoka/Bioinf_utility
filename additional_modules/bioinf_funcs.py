@@ -24,24 +24,18 @@ dict_comp_rna = {
 
 def check(seqs):
 
+      
+
     list_check = []
 
     for seq in seqs:
         sequ = seq.upper()
-        if set(sequ) <= set(list_DNA_RNA):
+        if set(sequ) <= set(list_DNA_RNA) and not("U" in sequ and "T" in sequ):
             list_check.append(seq)
-        else:
+        
+        else pass
 
-    seq_check = []
-
-    for seq in list_check:
-        sequ = seq.upper()
-        if (sequ.find("U") != -1) and (sequ.find("T") != -1):
-            pass
-        else:
-            seq_check.append(seq)
-
-    return seq_check
+    return list_check
 
 
 
