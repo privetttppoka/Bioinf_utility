@@ -1,52 +1,52 @@
 ### **filter_fastq and run_dna_rna_tools**
 
-## Content:
-
+### Content:
 * [For what?](#for-what)
-* [filter_fastq](#filter_fastq)
+* [fastq_module](#fastq_module)
 * [run_dna_rna_tools](#run_dna_rna_tools)
 * [List of procedures:](#list-of-procedures)
 * [Developers](#developers)
 
 
+
 ## **For what?**
 
-Основная программа *main_script.py* содержит в себе две функции **fastq_module** и **run_dna_rna_tools** которые решают нижеописанные биоинформатические задачи: 
+The main program *main_script.py* contains two functions **fastq_module** and **run_dna_rna_tools** that solve the bioinformatics problems described below: 
 
 ### fastq_module
 
-Эта функция **`fastq_module`** выполняет фильтрацию данных FASTQ по нескольким параметрам, включая содержание GC, длину последовательности и порог качества чтения. Рассмотрим работу функции по шагам:
+This function **`fastq_module`** performs filtering of FASTQ data based on several parameters, including GC content, sequence length, and read quality threshold. Let's examine the operation of the function step by step:
 
-### Аргументы функции:
-1. **`input_fastq: str`** — имя FASTQ-файла, который будет обработан.
-2. **`output_fastq: str`** — имя выходного FASTQ-файла, куда будут сохранены отфильтрованные данные.
-3. **`gc_bounds: Union[tuple[float, float], float] = (0, 100)`** — границы для содержания GC (ГЦ-содержащих нуклеотидов: гуанина и цитозина). Можно передать либо кортеж (нижняя и верхняя границы), либо одно значение — тогда оно будет интерпретироваться как верхняя граница, а нижняя будет 0.
-4. **`length_bounds: Union[tuple[int, int], int] = (0, 2**32)`** — границы для длины последовательности. Аналогично, можно передать либо кортеж, либо одно значение — тогда оно будет интерпретировано как верхняя граница, а нижняя будет 0.
-5. **`quality_threshold: float = 0`** — минимальный порог для среднего качества последовательности.
+#### Function arguments:
+1. **`input_fastq: str`** is the name of the FASTQ file to be processed.
+2. **`output_fastq: str`** - name of the output FASTQ file where the filtered data will be saved.
+3. **`gc_bounds: union[tuple[float, float], float] = (0, 100)`** - bounds for GC content (GC-containing nucleotides: guanine and cytosine). You can pass either a tuple (lower and upper bounds) or a single value - then it will be interpreted as an upper bound and the lower bound will be 0.
+4. **`length_bounds: union[tuple[tuple[int, int], int] = (0, 2**32)`** - bounds for the length of the sequence. Similarly, you can pass either a tuple or a single value - then it will be interpreted as the upper bound, and the lower bound will be 0.
+5. **`quality_threshold: float = 0`** - minimum threshold for the average quality of the sequence.
 
-   - Если последовательность прошла фильтрацию, она записывается в выходной FASTQ-файл, находящийся в папке `filtered`. Если папки нет, она создается автоматически.
+   - If the sequence passed filtering, it is written to the output FASTQ file located in the `filtered` folder. If the folder does not exist, it is created automatically.
 
-### Вывод:
-Эта функция фильтрует данные из FASTQ-файла на основе трех параметров:
-1. **CG-содержание**.
-2. **Длина последовательности**.
-3. **Среднее качество чтения**.
+### Output:
+This function filters the data from the FASTQ file based on three parameters:
+1. **CG content**.
+2. **Sequence length**.
+3. **Average read quality**.
 
-Отфильтрованные последовательности сохраняются в новый FASTQ-файл в папке `filtered`.
+Filtered sequences are saved to a new FASTQ file in the `filtered` folder.
 
 
 ### run_dna_rna_tools
 
-Для run_dna_rna_tools принимает на вход произвольное количество аргументов с последовательностями ДНК или РНК (str), а последним аргументом название процедуры которую нужно выполнить. После этого она делает заданное действие над всеми переданными последовательностями и возвращает результат.
+The run_dna_rna_tools takes as input an arbitrary number of arguments with DNA or RNA sequences (str), and the last argument is the name of the procedure to be executed. It then performs the specified action on all passed sequences and returns the result.
 
 ### List of procedures:
 
-- transcribe — вернуть транскрибированную последовательность
-- reverse — вернуть развёрнутую последовательность
-- complement — вернуть комплементарную последовательность
-- reverse_complement — вернуть обратную комплементарную последовательность
+- transcribe - return the transcribed sequence
+- reverse - return the expanded sequence
+- complement - return the complementary sequence
+- reverse_complement - return the reverse complementary sequence
 
-Данные функции подгружаются из модуля bioinf_funcs который вы можете использовать и в собственных программах через import
+These functions are loaded from the bioinf_funcs module, which you can also use in your own programs via imports
 
 ## **Developers**
-+ [Назарова Алина](https://github.com/privetttppoka)
++ [Alina Nazarova](https://github.com/privetttppoka)
