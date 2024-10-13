@@ -39,6 +39,7 @@ def transcribe(seqs):
     return [seq.replace("T", "U").replace("t", "u") for seq in seqs]
 
 
+
 def reverse(seqs):
     return [seq[::-1] for seq in seqs]
 
@@ -60,3 +61,4 @@ def complement(seqs):
 
 def reverse_complement(seqs):
     return reverse(complement(seqs))
+
