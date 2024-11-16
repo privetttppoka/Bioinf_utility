@@ -31,9 +31,6 @@ def check(seqs):
         if set(sequ) <= set(list_dna_rna) and not ("U" in sequ and "T" in sequ):
             list_check.append(seq)
 
-        else:
-            pass
-
     return list_check
 
 
@@ -43,13 +40,7 @@ def transcribe(seqs):
 
 
 def reverse(seqs):
-
-    list_rev = []
-
-    for seq in seqs:
-        list_rev.append(seq[::-1])
-
-    return list_rev
+    return [seq[::-1] for seq in seqs]
 
 
 def complement(seqs):
@@ -68,7 +59,4 @@ def complement(seqs):
 
 
 def reverse_complement(seqs):
-    list_revcom = []
-    seqs = complement(seqs)
-    list_revcom = reverse(seqs)
-    return list_revcom
+    return reverse(complement(seqs))
