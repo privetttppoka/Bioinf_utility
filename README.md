@@ -1,111 +1,125 @@
-
-### **filter_fastq and run_dna_rna_tools**
+### **FASTQ and DNA/RNA/Amino Acid Sequences Tool**
 
 ### Content:
 * [For what?](#for-what)
-* [parse_blast_output](#parse_blast_output)
+* [DNASequence](#dnasequence)
+* [RNASequence](#rnasequence)
+* [AminoAcidSequence](#aminoacidsequence)
+* [filter_fastq Function](#filter-fastq-function)
 * [convert_multiline_fasta_to_oneline](#convert_multiline_fasta_to_oneline)
-* [fastq_module](#fastq_module)
-* [run_dna_rna_tools](#run_dna_rna_tools)
-* [List of procedures:](#list-of-procedures)
+* [parse_blast_output](#parse_blast_output)
 * [Developers](#developers)
 
-
-
 ## **For what?**
-The *bio_files_processor.py*  contains two functions **parse_blast_output** and **convert_multiline_fasta_to_oneline** 
+The *bioinf_modul_upgraded* contains several functions for working with **DNA, RNA, and Amino Acid sequences**, as well as **FASTQ and BLAST output files**.
 
-### parse_blast_output
+## **DNASequence**
+Class representing a DNA sequence.
 
-The parse_blast_output function extracts the top BLAST hit descriptions for each query and writes them to an output file in a sorted order.
+### Possible Methods:
+- `__len__` : Returns the length of the DNA sequence.
+- `__str__` : Returns the DNA sequence as a string.
+- `__repr__`: Prints the sequence in a readable format.
+- **alphabet_check**: Checks if the sequence is a valid DNA sequence.
+- **complement**: Returns the complementary DNA sequence.
+- **transcribe**: Converts the DNA sequence into an RNA sequence.
+- **reverse**: Returns the reverse of the DNA sequence.
+- **reverse_complement**: Returns the reverse complement of the DNA sequence.
 
-#### Function arguments:
-1. 'input_file: str` Path to the BLAST results file.
-2. `output_file: str` Path to the output file where the sorted list of top BLAST hits will be saved.
-
-`Output:`
-The output file will contain one description per line, sorted alphabetically.
-
-#### Usage example 
+#### Usage example:
 ```python
-from bio_files_processor import parse_blast_output
+from bioinf_modul_upgraded import DNASequence
 
-# Set file paths
-input_file = "example_blast_results.txt"
-output_file = "sorted_blast_hits.txt"
-
-# Parse BLAST output
-parse_blast_output(input_file, output_file)
+dna = DNASequence('_your_sequence_here')
+dna.complement()
+dna.transcribe()
+dna.reverse()
+dna.reverse_complement()
 ```
 
-### convert_multiline_fasta_to_oneline
+## **RNASequence**
+Class representing an RNA sequence.
 
-The convert_multiline_fasta_to_oneline function takes a FASTA file with sequences split across multiple lines and formats it so each sequence is presented on a single line.
+### Possible Methods:
+- `__len__` : Returns the length of the RNA sequence.
+- `__str__` : Returns the RNA sequence as a string.
+- `__repr__`: Prints the sequence in a readable format.
+- **alphabet_check**: Checks if the sequence is a valid RNA sequence.
+- **complement**: Returns the complementary RNA sequence.
 
-#### Function arguments:
-1. `input_fasta: str` Path to the input FASTA file with multiline sequences.
-2. `output_fasta: str` (Optional) Path to the output FASTA file where single-line sequences will be saved. If not provided, the result will be printed to the console.
-`Output:`
-The output FASTA file will contain sequences in a single-line format.
-
-#### Usage example
+#### Usage example:
 ```python
-from bio_files_processor import convert_multiline_fasta_to_oneline
+from bioinf_modul_upgraded import RNASequence
 
-# Set file paths
-input_fasta = "multiline_fasta.fasta"
-output_fasta = "oneline_fasta.fasta"
-
-# Convert FASTA format
-convert_multiline_fasta_to_oneline(input_fasta, output_fasta)
+rna = RNASequence('_your_sequence_here')
+rna.complement()
+rna.reverse()
+rna.reverse_complement()
 ```
 
-The main program *main_script.py* contains two functions **fastq_module** and **run_dna_rna_tools** that solve the bioinformatics problems described below: 
+## **AminoAcidSequence**
+Class representing an amino acid sequence.
 
-### fastq_module
+### Possible Methods:
+- `__len__` : Returns the length of the amino acid sequence.
+- `__str__` : Returns the amino acid sequence as a string.
+- `__getitem__`: Returns a slice of the sequence.
+- `__repr__`: Prints the sequence in a readable format.
+- **alphabet_check**: Checks if the sequence contains only valid amino acid characters.
+- **molecular_weight**: Computes the molecular weight of the sequence.
 
-This function **`fastq_module`** performs filtering of FASTQ data based on several parameters, including GC content, sequence length, and read quality threshold. Let's examine the operation of the function step by step:
+#### Usage example:
+```python
+from bioinf_modul_upgraded import AminoAcidSequence
 
-#### Function arguments:
-1. **`input_fastq: str`** is the name of the FASTQ file to be processed.
-2. **`output_fastq: str`** - name of the output FASTQ file where the filtered data will be saved.
-3. **`gc_bounds: union[tuple[float, float], float] = (0, 100)`** - bounds for GC content (GC-containing nucleotides: guanine and cytosine). You can pass either a tuple (lower and upper bounds) or a single value - then it will be interpreted as an upper bound and the lower bound will be 0.
-4. **`length_bounds: union[tuple[tuple[int, int], int] = (0, 2**32)`** - bounds for the length of the sequence. Similarly, you can pass either a tuple or a single value - then it will be interpreted as the upper bound, and the lower bound will be 0.
-5. **`quality_threshold: float = 0`** - minimum threshold for the average quality of the sequence.
+AA = AminoAcidSequence('_your_sequence_here')
+AA.molecular_weight()
+AA.alphabet_check()
+```
 
-   - If the sequence passed filtering, it is written to the output FASTQ file located in the `filtered` folder. If the folder does not exist, it is created automatically.
+## **filter_fastq Function**
+This function filters FASTQ data based on GC content, sequence length, and read quality threshold.
+
+### Function arguments:
+1. **`input_fastq: str`** - Path to the input FASTQ file.
+2. **`output_fastq: str`** - Path to the output FASTQ file (default: saves in `filtered` folder).
+3. **`gc_bounds: Union[tuple[float, float], float] = (0, 100)`** - GC content range.
+4. **`length_bounds: Union[tuple[int, int], int] = (0, 2**32)`** - Sequence length range.
+5. **`quality_threshold: float = 0`** - Minimum average quality score.
 
 ### Output:
-This function filters the data from the FASTQ file based on three parameters:
-1. **CG content**.
-2. **Sequence length**.
-3. **Average read quality**.
+Filtered sequences are saved in the `filtered` folder.
 
-Filtered sequences are saved to a new FASTQ file in the `filtered` folder.
+## **convert_multiline_fasta_to_oneline**
+Converts a multiline FASTA file into a single-line format.
 
+### Function arguments:
+1. **`input_fasta: str`** - Path to the input FASTA file.
+2. **`output_fasta: str`** (Optional) - Path to the output FASTA file. If not provided, the result is printed to the console.
 
-### run_dna_rna_tools
-
-The run_dna_rna_tools takes as input an arbitrary number of arguments with DNA or RNA sequences (str), and the last argument is the name of the procedure to be executed. It then performs the specified action on all passed sequences and returns the result.
-
-### List of procedures:
-
-- transcribe - return the transcribed sequence
-- reverse - return the expanded sequence
-- complement - return the complementary sequence
-- reverse_complement - return the reverse complementary sequence
-
-### Usage example
-
+### Usage example:
 ```python
-run_dna_rna_tools('ATG', 'transcribe') # 'AUG'
-run_dna_rna_tools('ATG', 'reverse') # 'GTA'
-run_dna_rna_tools('AtG', 'complement') # 'TaC'
-run_dna_rna_tools('ATg', 'reverse_complement') # 'cAT'
-run_dna_rna_tools('ATG', 'aT', 'reverse') # ['GTA', 'Ta']
+from bioinf_modul_upgraded import convert_multiline_fasta_to_oneline
+
+convert_multiline_fasta_to_oneline("multiline_fasta.fasta", "oneline_fasta.fasta")
 ```
 
-These functions are loaded from the bioinf_funcs module, which you can also use in your own programs via imports
+## **parse_blast_output**
+Extracts top BLAST hit descriptions for each query and writes them to an output file.
+
+### Function arguments:
+1. **`input_file: str`** - Path to the BLAST results file.
+2. **`output_file: str`** - Path to the output file where the sorted list of top BLAST hits will be saved.
+
+### Output:
+The output file will contain one description per line, sorted alphabetically.
+
+### Usage example:
+```python
+from bioinf_modul_upgraded import parse_blast_output
+
+parse_blast_output("blast_results.txt", "sorted_hits.txt")
+```
 
 ## **Developers**
 + [Alina Nazarova](https://github.com/privetttppoka)
