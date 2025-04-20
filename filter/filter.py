@@ -4,7 +4,19 @@ from Bio.SeqUtils import gc_fraction
 from Bio.SeqRecord import SeqRecord
 from typing import Union
 import os
+import logging
 
+
+logging.basicConfig(
+    level=logging.INFO,  # Уровень логирования (INFO, DEBUG, WARNING, ERROR)
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",  # Формат сообщений
+    handlers=[
+        logging.FileHandler("fastq_filter.log"),  # Пишет логи в файл
+        logging.StreamHandler()  # Выводит логи в консоль (опционально)
+    ]
+)
+
+logger = logging.getLogger(__name__)
 
 class BiologicalSequence(ABC):
     """Abstract base class for biological sequences."""
@@ -156,46 +168,64 @@ def filter_fastq(
     using Biopython.
 
     Args:
-    - input_fastq (str): Input FASTQ file.
-    - output_fastq (str): Output FASTQ file to store filtered sequences.
-    - gc_bounds (tuple[float, float] or float): Bounds for GC content (default: (0, 100)).
-    - length_bounds (tuple[int, int] or int): Bounds for sequence length (default: (0, 2**32)).
-    - quality_threshold (float): Minimum average quality score (default: 0).
-    """
+        input_fastq (str): Input FASTQ file.
+        output_fastq (str): Output FASTQ file to store filtered sequences.
+        gc_bounds (tuple[float, float] or float): Bounds for GC content (default: (0, 100)).
+        length_bounds (tuple[int, int] or int): Bounds for sequence length (default: (0, 2**32)).
+        quality_threshold (float): Minimum average quality score (default: 0).
 
-    # If single values are provided for bounds, convert them to tuples
+    Raises:
+        FileNotFoundError: If input file doesn't exist.
+        ValueError: If bounds are invalid.
+    """
+    logger.info(f"Starting filtering of {input_fastq}")
+    
+    # Validate input file exists
+    if not os.path.exists(input_fastq):
+        error_msg = f"Input file not found: {input_fastq}"
+        logger.error(error_msg)
+        raise FileNotFoundError(error_msg)
+
+    # Validate bounds
     if isinstance(gc_bounds, (float, int)):
         gc_bounds = (0, gc_bounds)
     if isinstance(length_bounds, (float, int)):
         length_bounds = (0, length_bounds)
 
-    output_dir = os.path.join(os.getcwd(), "filtered")
+    if gc_bounds[0] > gc_bounds[1] or length_bounds[0] > length_bounds[1]:
+        error_msg = "Invalid bounds: lower bound cannot be greater than upper bound"
+        logger.error(error_msg)
+        raise ValueError(error_msg)
 
+    # Set up output directory
+    output_dir = os.path.join(os.getcwd(), "filtered")
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
+        logger.info(f"Created output directory: {output_dir}")
 
-    output_fastq = os.path.join(output_dir, output_fastq)
+    output_path = os.path.join(output_dir, output_fastq) if output_fastq else os.path.join(output_dir, "filtered.fastq")
 
-    # Open output FASTQ file for writing filtered sequences
-    with open(output_fastq, "w") as out_handle:
-        # Iterate over the FASTQ file using Biopython's SeqIO
+    filtered_count = 0
+    total_count = 0
+
+    with open(output_path, "w") as out_handle:
         for record in SeqIO.parse(input_fastq, "fastq"):
-            sequence = record.seq
-            quality = record.letter_annotations["phred_quality"]
-            sequence_length = len(sequence)
-
-            # Calculate GC content using Biopython's utility function
-            gc_content = gc_fraction(sequence) * 100
-
-            # Calculate average quality score
-            avg_quality = sum(quality) / len(quality)
-
-            # Apply the filtering conditions based on GC content, length, and quality
-            if (
-                (length_bounds[0] <= sequence_length <= length_bounds[1])
-                and (gc_bounds[0] <= gc_content <= gc_bounds[1])
-                and (avg_quality >= quality_threshold)
-            ):
-                # Write the filtered record to the output file
+            total_count += 1
+            seq = record.seq
+            quals = record.letter_annotations["phred_quality"]
+            
+            # Calculate GC content
+            gc_content = 100 * (seq.count("G") + seq.count("C")) / len(seq)
+            
+            # Calculate average quality
+            avg_quality = sum(quals) / len(quals) if quals else 0
+            
+            # Check filters
+            if (gc_bounds[0] <= gc_content <= gc_bounds[1] and
+                length_bounds[0] <= len(seq) <= length_bounds[1] and
+                avg_quality >= quality_threshold):
                 SeqIO.write(record, out_handle, "fastq")
+                filtered_count += 1
 
+    logger.info(f"Filtering complete. Kept {filtered_count} out of {total_count} sequences.")
+    return output_path
